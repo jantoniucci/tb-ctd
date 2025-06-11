@@ -99,57 +99,58 @@ The project uses Spring Modulith's observability features to inspect the runtime
 
 ## 🧱 Architecture Notes
 
-This project is being designed using **Clean Architecture** principles, enriched with **modular boundaries**, **use-case-driven design**, and **event-driven communication**.
+This module follows Clean Architecture principles, aligned with **Spring Modulith** practices to ensure a modular and maintainable structure. The root path is:
 
-### Core Architectural Layers
+```
+src/main/java/com/bank/banking/deposit/ctdaccountservice
+```
 
-* **Domain Layer**
-  Defines the core business model and rules (e.g., `Account`, `InterestPolicy`, `MaturitySchedule`). This layer is **pure Java**, without dependencies on frameworks or external libraries. It includes:
+---
 
-  * Value Objects and Entities
-  * Domain Services
-  * Domain Events (e.g., `AccountMatured`, `DepositCreated`)
+## 📁 Folder Structure
 
-* **Application Layer**
-  Orchestrates use cases like `OpenAccount`, `MakeDeposit`, `ApplyMaturity`. It coordinates between the domain and infrastructure layers and is responsible for:
+```plaintext
+src/
+├── domain/          ← Domain entities (e.g., `Account`, `Product`) and Output port interfaces (e.g., `AccountRepository`)
+├── usecase/         ← Application services / Use cases (e.g., `CreateAccountUseCase`) and Commands (e.g., `CreateAccountCommand`)
+├── infrastructure/  ← REST controllers, DTOs (e.g., `CreateAccountRequest`), JPA entities, Repository adapters, and Mappers
+└── CtdAccountService.java ← Spring Boot main application
+```
 
-  * Input validation
-  * Transaction boundaries
-  * Publishing domain events
-  * Use case orchestration without containing business logic itself
+> Avoid creating nested folders within each package to keep the structure flat and easy to navigate.
 
-* **Infrastructure Layer**
-  Provides technical capabilities to support the domain and application layers. It includes:
+---
 
-  * Adapter for **TigerBeetle Java client**
-  * Persistence (if needed for internal states or metadata)
-  * Time services, UUID generators, and serialization
-  * Event publishing or logging infrastructure
+## 🔄 Dependency Flow
 
-* **Interface Layer** *(Planned)*
-  The outermost layer intended for interacting with the application via:
+```plaintext
+domain ← usecase ← infrastructure
+```
 
-  * CLI interface (initial)
-  * REST API (future)
-  * Input DTOs and output views for external consumers
+* `usecase` depends on `domain`
+* `infrastructure` depends on `usecase`
+* Controllers handle DTOs and commands only — not domain entities
 
-* **Modular Boundaries**
-  The system is structured around **business capabilities**, separating concerns cleanly into vertical modules (e.g., `accounts`, `deposits`, `maturity`, `renewals`) which each contain their own domain, application logic, and adapters.
+---
 
-* **Domain Events & Event-Driven Flow**
-  Domain events like `DepositPeriodClosed` or `AccountRenewed` are used to trigger follow-up processes decoupled from the original command, promoting extensibility and separation of concerns.
+## 🧩 Spring Modulith Guidelines
 
-* **Aggregate Roots and Invariants**
-  Aggregates enforce consistency boundaries, e.g., `Account` as the root of a CDT lifecycle. Invariants like "no deposits after deposit period ends" are enforced within the aggregate.
+Apply **Spring Modulith** by treating each top-level package as a self-contained module.
 
-* **Typed Use Cases**
-  Use cases are modeled explicitly, with clear input/output models, avoiding "anemic services." Each use case is isolated and testable in complete separation from infrastructure.
+* **@ApplicationModule**
+  Declare module boundaries explicitly at the root of each logical unit (e.g., `usecase`, `domain`).
 
-* **Port and Adapter Pattern**
-  All dependencies point inward. Interfaces (Ports) are defined in the domain or application layers, while implementations (Adapters) live in the infrastructure layer.
+* **@NamedInterface**
+  Use to expose only necessary classes (e.g., mappers, shared DTOs) between modules.
 
-* **Time as a First-Class Concern**
-  The concept of time (e.g., for deposit periods, maturity, grace windows) is handled explicitly via injected clock providers, enabling testability and simulation.
+* **Event-Driven Design**
+  Use domain events (e.g., `AccountCreatedEvent`) instead of direct calls between modules.
+
+* **Testing**
+  Apply `@ApplicationModuleTest` to validate module boundaries and encapsulation.
+
+* **Visibility Rules**
+  Keep domain classes package-private to avoid accidental usage from controllers or adapters.
 
 ---
 
