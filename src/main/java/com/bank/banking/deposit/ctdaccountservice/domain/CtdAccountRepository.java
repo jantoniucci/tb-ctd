@@ -11,4 +11,5 @@ public interface CtdAccountRepository {
     List<CtdAccount> findAll();
     void deleteById(UUID id);
     boolean existsByAlias(String alias);
+    Optional<CtdAccount> findByIdWithPessimisticLock(UUID id);
 }

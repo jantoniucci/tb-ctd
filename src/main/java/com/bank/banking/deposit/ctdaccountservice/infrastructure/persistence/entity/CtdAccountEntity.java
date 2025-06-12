@@ -29,4 +29,6 @@ public class CtdAccountEntity {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // No @Version field, as requested. Pessimistic locking is handled at the repository/service layer.
 }

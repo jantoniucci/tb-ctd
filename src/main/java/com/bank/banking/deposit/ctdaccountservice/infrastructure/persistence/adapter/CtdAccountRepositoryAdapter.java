@@ -24,7 +24,8 @@ public class CtdAccountRepositoryAdapter implements CtdAccountRepository {
     @Override
     public CtdAccount save(CtdAccount account) {
         CtdAccountEntity entity = mapper.toEntity(account);
-        return mapper.toDomain(jpaRepository.save(entity));
+        return mapper.toDomain(entity
+        );
     }
 
     @Override
@@ -50,5 +51,10 @@ public class CtdAccountRepositoryAdapter implements CtdAccountRepository {
     @Override
     public boolean existsByAlias(String alias) {
         return jpaRepository.existsByAlias(alias);
+    }
+
+    @Override
+    public Optional<CtdAccount> findByIdWithPessimisticLock(UUID id) {
+        return jpaRepository.findWithLockingById(id).map(mapper::toDomain);
     }
 }

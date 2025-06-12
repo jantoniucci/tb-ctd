@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Spring Boot",
+      "request": "launch",
+      "mainClass": "com.bank.banking.deposit.ctdaccountservice.CtdAccountService",
+      "projectName": "ctd-account-service",
+      "console": "integratedTerminal"
+    }
+  ]
+}
