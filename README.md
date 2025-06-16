@@ -96,7 +96,7 @@ The project uses Spring Modulith's observability features to inspect the runtime
 That profile adds some dependencies, like [Spring Cloud Sleuth](https://spring.io/projects/spring-cloud-sleuth) as well as its integration with [Zikpkin](https://zipkin.io/). It also includes docker-compose support and will start [Zikpkin](https://zipkin.io/) for you when the application starts. Interactions with the system will now expose the logical module invocation and their choreography.
 
 If you are using podman, then run:
-  ````
+  ```
   $ export SPRING_DOCKER_COMPOSE_ENABLED=false && podman-compose -f compose.yaml up -d && mvn spring-boot:run -Pobservability
   ```
 [Zikpkin](https://zipkin.io/) web browser is available at [http://localhost:9411/zipkin/](http://localhost:9411/zipkin/)
